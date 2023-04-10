@@ -1,0 +1,337 @@
+txt = ""
+func is_numeric()
+func is_alpha()
+func is_alphanumeric()
+func is_end() -> ' ' || '\n' || '\0'
+func is_special()
+
+func main(ctxt) {
+    txt = ctxt
+
+    root = new_root()
+
+    procedures = {}
+
+    while(1) {
+        procedure = lookahead()
+        if (procedure.type != "procedure") {
+            error("expression outside procedure scope")
+        }
+        procedures += procedure
+    }
+
+    root.procedures = procedures
+
+    compile_to("json", root)
+}
+
+func compile_to(type, root) {
+    if (type == "json") compile_to_json(root)
+}
+
+func tab(int s) {
+    while(s--) print("\t")
+}
+
+func compile_to_json(item, tab_size=0) {
+    p = 0
+    mp = len(item)
+    
+    tab(tab_size++)
+    print("{")
+
+    for (const key in item.keys()) {
+        print('"' + key + "\": ")
+        
+        if (type(item[key]) == str) {
+            tab(tab_size)
+            print('"' + item[key] + '"')
+        } else {
+            compile_to_json(item[key], tab_size)
+        }
+
+        if (p + 1 < mp) print(",\n")
+        else print("\n")
+    }
+ 
+    print("}")
+}
+
+func next() {
+    return txt.pop()
+}
+
+func next_skip_end() {
+    seek_next_char()
+    return txt.pop()
+}
+
+func next_noop() {
+    return txt[0]
+}
+
+// This procedure gets a buffer and decides if it is one of:
+// - variable definition
+// - procedure definition
+// - variable assignment
+// - procedure call
+// - string, int, sum, subtraction, division, multiplication, modulus, char
+func interpret(buff) {
+
+    // this is the definition of a variable or a function
+    if (is_type(buff)) {
+        c = next_skip_end()
+        if (!is_alpha(c)) error("invalid definition starting with number")
+
+        type = buff
+        name = lookahead(read_only=true)
+
+        c = next_skip_end()
+
+        // is definition of new variable
+        if (c == ';' or c == '=') {
+            value = ""
+
+            // var has definition
+            if (c == '=') {
+                next()
+                value = lookahead()
+            }
+
+            return new_var(type, name, value)
+        }
+
+        // is definition of func
+        if (c == '(') {
+            operands = []
+
+            // get the function arguments
+            while(1) {
+                op = lookahead()
+                c = next_skip_end()
+
+                if (c == ')') {
+                    break;
+                } else if (c != ',') {
+                    error("invalid function operands")
+                }
+
+                operands += op
+            }
+
+            procedure = []
+            declared_variables = {}
+
+            c = next_skip_end()
+
+            // try to get the function implementation
+            if (c == ';') {
+                // Function defined without implementation 
+            } else if (next_skip_end() != '{') {
+                // Function defined with implementation (may already be defined)
+
+                while(1) {
+                    prcd_do = lookahead()
+
+                    c = next_skip_end()
+
+                    // handle procedure definition
+                    if (prcd_do.type == "procedure") {
+                        error("procedure has been defined inside procedure")
+                    }
+
+                    // handle variable definition
+                    if (prcd_do.type == "variable_declaration") {
+                        if (declared_variables.has(prcd_do.variable_name)) {
+                            error("redeclared variable '" + prcd_do.variable_name + "'")
+                        } else {
+                            declared_variables.set(new_variable_definition(prcd_do.variable_type, prcd_do.variable_name))
+                        }
+                    }
+
+                    // [TODO] what else are the rules of a procedure?
+                    
+                    if (c == '}') {
+                        break;
+                    }
+
+                    procedure += prcd_do
+                }
+            } else {
+                error("invalid function definition")
+            }
+
+            return new_func(return_type=type, name, operands, procedure)
+        }
+        
+        error("invalid definition")        
+    }
+
+    // this is a string
+    if (buff == '\"') {
+        str = lookahead()
+        if (next() != '\"') {
+            error("invalid string definition")
+        }
+        return new_string(str)
+    }
+
+    // [TODO] This is a function call or a variable assignment
+    if (is_alpha(buff[0]) && is_alphanumeric(buff)) {
+        func = lookahead()
+
+        c = next_skip_end()
+        name = buff
+
+        // procedure call
+        if (c == '(') {
+            operands = []
+
+            while(1) {
+                operand = lookahead()
+
+                c = next_skip_end()
+
+                if (operand != null) {
+                    operands += operand
+                }
+
+                if (c == ')') {
+                    break;
+                } else if (c != ',') {
+                    error("invalid arguments for procedure call")
+                }
+            }
+
+            return new_procedure_call(name, operands)
+        }
+
+        // variable assignment
+        if (c == '=') {
+            value_expression = []
+
+            name = buff
+            
+            while(1) {
+                expression_item = lookahead()
+
+                c = next_skip_end()
+
+                if (expression_item != null) {
+                    value_expression += expression_item
+                } 
+
+                if (c == ';') {
+                    break;
+                }
+            }
+
+            if (len(value_expression) == 0) {
+                error("invalid assignment, no value provided")
+            }
+
+            return new_variable_assignment(name, value_expression)
+        }
+    }
+
+    // this is a char
+    if (buff == '\'') {
+        chr = lookahead()
+        if (next() != '\'') {
+            error("invalid character definition")
+        }
+        return new_char(chr)
+    }
+
+    // this is a number
+    if (buff.every(c => is_numeric(c)) || (buff[0] == '-' && buff[1:].every(c => is_numeric(c)))) {
+        return new_number(buff)
+    }
+
+    // this is sum
+    if (buff[0] == '+' && len(buff) == 1) {
+        return new_sum()
+    }
+
+    // this is subtraction
+    if (buff[0] == '-' && len(buff) == 1) {
+        return new_subtraction()
+    }
+
+    // this is multiplication
+    if (buff[0] == '*' && len(buff) == 1) {
+        return new_multiplication()
+    }
+
+    // this is division
+    if (buff[0] == '/' && len(buff) == 1) {
+        return new_division()
+    }
+
+    // this is modulus
+    if (buff[0] = '%' && len(buff) == 1) {
+        return new_modulus()
+    }
+}
+
+func lookahead(read_only) {
+    seek_next_char()
+    buff = ""
+    char_count = 0
+    while(c = next_noop(); !is_alphanumeric(c)) {
+        buff += c
+        txt.pop()
+        char_count++
+    }
+
+    if (!char_count == 0) {
+        return
+    }
+
+    if (read_only) {
+        return buff
+    }
+    
+    return interpret(buff)
+}
+
+func seek_next_char() {
+    while(1) {
+        c = next_noop()
+        if (!is_end(c)) return c
+        txt.pop()
+    } 
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+This compiler takes a .c file and transforms it in .asm.
+
+This compiler ignores C standard libraries and only supports specific source codes.
+
+Gramatical tree is built as a graph.
+
+This graph always starts on node called root.
+
+Every node has attributes "type", "value", "procedure" and "operands"
+
+Every node can have type "root", "function", "expression", "string", "int", "sum"
+
+All nodes must have a type.
+
+All nodes that are not expression have a type 
+
+This compiler only compiles valid C code.
+
+The code it's able to compile is defined by its version (1.X.X compiles first, 2.X.X compiles) 
+

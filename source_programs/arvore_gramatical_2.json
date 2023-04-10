@@ -1,0 +1,43 @@
+{
+    "type": "root",
+    "functions": {
+        "main": {
+            "type": "function",
+            "value": "main",
+            "operands": [],
+            "procedure": [
+                {
+                    "type": "function",
+                    "value": "printf",
+                    "procedure": [],
+                    "operands": [
+                        {
+                            "type": "string",
+                            "value": "\"%d jose\n\"",
+                            "operands": [],
+                            "procedure": []
+                        },
+                        {
+                            "type": "expression",
+                            "value": "3",
+                            "operands": [
+                                {
+                                    "type": "int",
+                                    "value": "1"
+                                },
+                                {
+                                    "type": "sums",
+                                    "value": "\"%d jose\n\""                       
+                                },
+                                {
+                                    "type": "int",
+                                    "value": "2"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}

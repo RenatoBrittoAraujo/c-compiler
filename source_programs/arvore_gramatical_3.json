@@ -1,0 +1,147 @@
+{
+    "type": "root",
+    "procedures": {
+        "main": {
+            "type": "procedure",
+            "procedure_name": "main",
+            "declared": "true",
+            "declared_variables": {
+                "x": {
+                    "type": "variable_declaration",
+                    "variable_type": "int",
+                    "variable_name": "x"
+                },
+                "y": {
+                    "type": "variable_declaration",
+                    "variable_type": "int",
+                    "variable_name": "x"
+                }
+            },
+            "operands": [],
+            "procedure": [
+                {
+                    "type": "variable_definition",
+                    "variable_type": "int",
+                    "variable_name": "x",
+                    "value": {
+                        "type": "int",
+                        "value": "1"
+                    }
+                },
+                {
+                    "type": "variable_declaration",
+                    "variable_type": "int",
+                    "variable_name": "y"
+                },
+                {
+                    "type": "procedure_call",
+                    "procedure_name": "printf",
+                    "operands": [
+                        {
+                            "type": "string",
+                            "value": "\"%d jose\n\""
+                        },
+                        {
+                            "type": "expression",
+                            "value": "3",
+                            "operands": [
+                                {
+                                    "type": "int",
+                                    "value": "1"
+                                },
+                                {
+                                    "type": "sum",
+                                    "value": "\"%d jose\n\""
+                                },
+                                {
+                                    "type": "int",
+                                    "value": "2"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "variable_assignment",
+                    "variable_name": "x",
+                    "expression": {
+                        "type": "int",
+                        "value": "3"
+                    },
+                    "value": "3"
+                },
+                {
+                    "type": "variable_assignment",
+                    "variable_name": "y",
+                    "expression": {
+                        "type": "expression",
+                        "value": "",
+                        "operands": [
+                            {
+                                "type": "variable",
+                                "value": "x"
+                            },
+                            {
+                                "type": "sum"
+                            },
+                            {
+                                "type": "int",
+                                "value": "2"
+                            }
+                        ]
+                    },
+                    "value": ""
+                },
+                {
+                    ...
+                },
+                {
+                    "type": "procedure_call",
+                    "procedure_name": "print_thing",
+                    "operands": []
+                },
+                {
+                    "type": "expression",
+                    "value": "",
+                    "operands": [
+                        {
+                            "type": "int",
+                            "value": "1"
+                        },
+                        {
+                            "type": "sum"
+                        },
+                        {
+                            "type": "int",
+                            "value": "3"
+                        },
+                        {
+                            "type": "sum"
+                        },
+                        {
+                            "type": "int",
+                            "value": "2"
+                        }
+                    ]
+                }
+            ]
+        },
+        "print_thing": {
+            "type": "procedure",
+            "declared": "true",
+            "operands": [],
+            "procedure": [
+                {
+                    "type": "procedure_call",
+                    "procedure_name": "printf",
+                    "operands": [
+                        {
+                            "type": "string",
+                            "value": "thing\n"
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}

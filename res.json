@@ -1,0 +1,2 @@
+cat source_programs/hardness2.c > target.c
+python3 ccompiler.py

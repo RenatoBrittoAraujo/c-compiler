@@ -33,6 +33,10 @@ I expect to turn C code to:
 - Advanced error checking (takes time, barely any value)
 - Error handling (to find all error within source code. takes time, no value if can just use a working C compiler already to see all error if I want and also it's just plaing boring dev work)
 
+# Things ive learned
+
+Write an interpreter of BNF and then use a BNF gramatic to accomplish the goal as is being currently done via ifs and elses
+
 
 # v1
 

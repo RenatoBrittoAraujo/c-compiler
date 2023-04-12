@@ -197,11 +197,11 @@ class Stdin():
 #=====================================================================
 
 def error(msg, exception=None):
-    print("ERROR: ", msg)
-    print("ABORTED!")
     if exception is not None:
-        raise exception
+        raise exception(msg)
     else:
+        print("ERROR: ", msg)
+        print("ABORTED!")
         exit(1)
 
 def is_numeric(x: str):
@@ -239,7 +239,7 @@ def compile_to(type, root):
 
 def tab(s: int):
     for i in range(0, s):
-        print("\t", end="")
+        print("  ", end="")
 
 def compile_to_json(node: Node, tab_size=0):
     if node == None:
@@ -255,6 +255,8 @@ def compile_to_json(node: Node, tab_size=0):
     pr("{\n")
 
     for key, cnode in node.items():
+        p = p + 1
+
         if key[0] == '_':
             continue
         tab(tab_size+1)
@@ -305,11 +307,10 @@ def compile_to_json(node: Node, tab_size=0):
         else:
             error("failed to compile to json, invalid type: " + str(type(cnode)) + " for key: " + key)
 
-        if p + 1 < mp:
+        if p < mp:
             pr(",\n")
         else:
             pr("\n")
-        p = p + 1
  
     tab(tab_size)
     pr("}")

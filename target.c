@@ -1,13 +1,4 @@
-int main() {
-    int my = 1;
-    int name = 2;
-    int is = my + name;
-    printf("%d jose\n");
-    {
-        char x = 'a';
-    }
-}
-
-char jose() {
-    
+int main () {
+    printf("%d\n", 1 + 2);
+    a = 3 + prcd1() + prcd2();
 }

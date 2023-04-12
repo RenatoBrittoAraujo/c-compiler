@@ -1,2 +1,96 @@
-cat source_programs/hardness2.c > target.c
-python3 ccompiler.py
+
+
+{
+  "type": "root",
+  "procedures": {
+    "main": {
+      "type": "PROCEDURE",
+      "declared": "true",
+      "procedure_name": "main",
+      "return_type": "int",
+      "operands": [
+        
+      ],
+      "declared_variables": {
+      },
+      "procedure_operations": [
+        {
+          "type": "PROCEDURE_CALL",
+          "value": "",
+          "procedure_name": "printf",
+          "operands": [
+            {
+              "type": "STRING",
+              "value": "%d\n",
+              "nested_pointer_level": "0"
+            },
+            {
+              "operands": [
+                {
+                  "type": "INT",
+                  "value": "1",
+                  "nested_pointer_level": "0"
+                },
+                {
+                  "type": "SUM",
+                  "value": "+",
+                  "nested_pointer_level": "0"
+                },
+                {
+                  "type": "INT",
+                  "value": "2",
+                  "nested_pointer_level": "0"
+                }
+              ],
+              "type": "EXPRESSION",
+              "value": ""
+            }
+          ]
+        },
+        {
+          "type": "VARIABLE_ASSIGNMENT",
+          "value": "",
+          "variable_name": "a",
+          "expression": {
+              "operands": [
+                {
+                  "type": "INT",
+                  "value": "3",
+                  "nested_pointer_level": "0"
+                },
+                {
+                  "type": "SUM",
+                  "value": "+",
+                  "nested_pointer_level": "0"
+                },
+                {
+                  "type": "PROCEDURE_CALL",
+                  "value": "",
+                  "procedure_name": "prcd1",
+                  "operands": [
+                    
+                  ]
+                },
+                {
+                  "type": "SUM",
+                  "value": "+",
+                  "nested_pointer_level": "0"
+                },
+                {
+                  "type": "PROCEDURE_CALL",
+                  "value": "",
+                  "procedure_name": "prcd2",
+                  "operands": [
+                    
+                  ]
+                }
+              ],
+              "type": "EXPRESSION",
+              "value": ""
+            }
+        }
+      ]
+    }
+  }
+}
+
